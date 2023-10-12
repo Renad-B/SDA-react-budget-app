@@ -11,3 +11,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.main-div{
+  display: grid;
+  grid-template-columns: 30% 30% 30%;
+  grid-template-rows: 65% 35%;
+  padding: 5%;
+  justify-content: space-evenly;
+  justify-items: center;
+  align-content: space-evenly;
+  align-items: start center;
+}
