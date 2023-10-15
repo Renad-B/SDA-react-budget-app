@@ -1,54 +1,53 @@
-// Done, but te console why it keeps updating !!
-
 import React, { ChangeEvent, FormEvent, useState } from "react";
+import { IncomeItem } from "../type";
 
-type IncomeType = {
-  source: string;
-  amount: number;
-  date: string;
+type TotalIncome={
+  getIncome:(amount:number)=>void;
 };
 
-const IncomeForm = () => {
-  const [income, setIncome] = useState<IncomeType>({
+const IncomeForm = ({getIncome}:TotalIncome) => {
+  const [income, setIncome] = useState({
     source: "",
     amount: 0,
     date: "",
   });
 
-  const [incomes, setIncomes] = useState<IncomeType[]>([]);
+  const [IncomesList, setIncomesList] = useState<IncomeItem[]>([]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    //setIncome({...income,[name]:value})
+   const {name, value}=event.target;
 
-    setIncome((prevIncome) => {
-      return { ...prevIncome, [name]: value };
-    });
-    console.log(`Updated ${name}: ${value}`);
+   setIncome((prevIncome)=>{
+    return{...prevIncome, [name]:value};
+   })
   };
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    //console.log(income);
-    setIncomes((prevIncomes)=>{
-      return [...prevIncomes,income];
-    });
-    // Reset the income form fields after submission
-    setIncome({ source: "", amount: 0, date: "" }); 
-    console.log("Submitted Income:", income);
+
+    if(income.source && income.amount && income.date){
+      setIncomesList((prevIncomes) => {
+        return [...prevIncomes, income];
+      });
+
+     getIncome(income.amount);
+    }
   };
 
+  // delete 
+  
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} >
         <div>
-          <label htmlFor="source">Income sourse</label>
+          <label htmlFor="source">Income source</label>
           <input
             type="text"
             name="source"
             id="source"
             value={income.source}
-            onChange={handleChange}required
+            onChange={handleChange}
+            required
           />
         </div>
         <div>
@@ -58,7 +57,8 @@ const IncomeForm = () => {
             name="amount"
             id="amount"
             value={income.amount}
-            onChange={handleChange}required
+            onChange={handleChange}
+            required
           />
         </div>
         <div>
@@ -71,11 +71,12 @@ const IncomeForm = () => {
             onChange={handleChange}
           />
         </div>
-        <button>Add income</button>
+        <button type="submit">Add income</button>
       </form>
       <ul>
-        {incomes.map((income, index) => (
-          <li key={index}>
+      {IncomesList.length > 0 &&
+           IncomesList.map((income, index) => (
+             <li key={index}>
             {income.source}: {income.amount} EUR on {income.date}
           </li>
         ))}

@@ -1,42 +1,39 @@
-//Same as income 
-
 import React, { useState, ChangeEvent, FormEvent } from "react";
+import { ExpenseItem } from "../type";
 
-type ExpenseType= {
-  source: string;
-  amount: number;
-  date: string;
+type TotalExpense={
+  getExpense:(amount:number)=>void;
 }
 
-const ExpenseForm = () => {
-  const [expense, setExpense] = useState<ExpenseType>({
+const ExpenseForm = ({getExpense}:TotalExpense) => {
+  const [expense, setExpense] = useState<ExpenseItem>({
     source: "",
     amount: 0,
     date: "",
   });
-
- /// fix this one 
-  const [Expenses, setExpenses] = useState<ExpenseType[]>([]);
+ 
+  const [ExpensesList, setExpensesList] = useState<ExpenseItem[]>([]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    
+
     setExpense((prevIncome) => {
       return { ...prevIncome, [name]: value };
     });
-    console.log(`Updated ${name}: ${value}`);
+    //console.log(`Updated ${name}: ${value}`);
   };
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    //console.log(Expense);
-    setExpenses((prevExpenses)=>{
-      return [...prevExpenses,expense];
-    });
-    // Reset the Expense form fields after submission
-    setExpense({ source: "", amount: 0, date: "" }); 
-    console.log("Submitted Income:", Expenses);
+    if(expense.source && expense.amount && expense.date){
+      setExpensesList((prevExpenseList) => {
+        return [...prevExpenseList, expense];
+      });
+     getExpense(expense.amount);
+    }
   };
+  // delete
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -58,7 +55,7 @@ const ExpenseForm = () => {
             type="number"
             name="amount"
             id="amount"
-            value={expense.amount.toString()}
+            value={expense.amount}
             onChange={handleChange}
             required
           />
@@ -77,7 +74,7 @@ const ExpenseForm = () => {
         <button type="submit">Add Expense</button>
       </form>
       <ul>
-        {Expenses.map((expense, index) => (
+        {ExpensesList.length > 0 && ExpensesList.map ((expense,index)=> (
           <li key={index}>
             {expense.source}: {expense.amount} EUR on {expense.date}
           </li>
